@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SAML SP Initiation Tester</title>
+  <script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
+</head>
+<body>
+  <h2>Test SAML SP Initiation</h2>
+  <form id="samlForm" action="https://adfs.contoso.local/adfs/ls/" method="POST">
+    <input type="hidden" name="SAMLRequest" id="SAMLRequest">
+    <input type="hidden" name="RelayState" value="test123">
+    <button type="submit">Start SAML Request</button>
+  </form>
+
+  <script>
+    function generateSAMLRequest() {
+      const issueInstant = new Date().toISOString();
+      const samlRequestXml = `
+<samlp:AuthnRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+                   xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+                   ID="_${crypto.randomUUID()}"
+                   Version="2.0"
+                   IssueInstant="${issueInstant}"
+                   Destination="https://adfs.contoso.local/adfs/ls/"
+                   ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                   AssertionConsumerServiceURL="https://localhost:5003/Saml2/Acs">
+  <saml:Issuer>https://localhost:5003/Saml2</saml:Issuer>
+  <samlp:NameIDPolicy Format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
+                      AllowCreate="true" />
+</samlp:AuthnRequest>`;
+
+      const deflated = pako.deflateRaw(samlRequestXml, { level: 9 });
+      const base64Encoded = btoa(String.fromCharCode.apply(null, deflated));
+      document.getElementById("SAMLRequest").value = base64Encoded;
+    }
+
+    // Generate and submit
+    document.getElementById("samlForm").addEventListener("submit", function(e) {
+      generateSAMLRequest();
+    });
+  </script>
+</body>
+</html>

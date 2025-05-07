@@ -1,0 +1,22 @@
+# adfs-docker-compose.yml
+version: '3.8'
+services:
+  adfs:
+    build:
+      context: ./adfs
+      dockerfile: Dockerfile
+    isolation: process
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - adfs-state:C:/adfs-state
+    hostname: adfs.contoso.local
+    environment:
+      - DOMAIN=contoso.local
+      - ADFS_FQDN=adfs.contoso.local
+      - ADMIN_PASS=Passw0rd!
+    entrypoint: powershell.exe -ExecutionPolicy Bypass -File C:\\adfs\\bootstrap.ps1
+
+volumes:
+  adfs-state:
