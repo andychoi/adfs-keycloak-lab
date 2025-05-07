@@ -74,3 +74,17 @@ Ensure this is in your C:\Windows\System32\drivers\etc\hosts:
 - ADFS Metadata: https://adfs.contoso.local/FederationMetadata/2007-06/FederationMetadata.xml
 - Keycloak Admin UI: http://keycloak.local:8080 → admin / admin
 
+
+# Expose your local apps publicly (via ngrok)
+If you don’t want to fuss with certificates or host files, use ngrok to get a real HTTPS endpoint:
+
+```
+ngrok http 5001
+ngrok will give you a URL like https://abcd1234.ngrok.io.
+```
+
+Go back to your Azure AD app’s Redirect URIs and replace https://localhost:5001/signin-oidc with https://abcd1234.ngrok.io/signin-oidc.
+
+Restart your SP app (still listening on localhost:5001).
+
+Now Azure AD can redirect through the ngrok URL → your local server.

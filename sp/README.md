@@ -9,8 +9,6 @@ The necessary steps include installing the module, connecting to Microsoft Graph
 I’ll walk the user through creating an app using Microsoft Graph PowerShell. First, I'll outline how to install and connect to Microsoft Graph. Then, I'll show commands for creating an app and service principal for OpenID Connect and WS-Federation. However, Graph PowerShell doesn’t fully support configuring WS-Fed via the SDK, so I'll guide them to manually complete the protocol-specific settings. For SAML, while it supports some Beta features, I'll focus on showing how to create app registrations and service principals, followed by portal configuration instructions.
 
 
-Thought for 10 seconds
-
 
 Below is a **pure Microsoft Graph PowerShell SDK** approach. It avoids all the JSON-in-CLI quoting headaches and uses idiomatic cmdlets to:
 
@@ -120,3 +118,66 @@ You can now:
 * Test sign-in flows via **SAML-Tracer**, **jwt.ms**, or your own test client
 
 Let me know if you’d like a **PowerShell function** that wraps all three protocols into a single cmdlet!
+
+
+# three minimal ASP.NET Core apps configured for:
+
+- OpenID Connect (via --auth SingleOrg)
+- WS-Federation (using Microsoft.AspNetCore.Authentication.WsFederation)
+- SAML 2.0 (using Sustainsys.Saml2.AspNetCore2)
+
+
+
+| App               | Protocol       | What You’ll See Before Login  | What You’ll See After Login            |
+| ----------------- | -------------- | ----------------------------- | -------------------------------------- |
+| **TestOpenIdApp** | OpenID Connect | Browser redirects to Azure AD | Razor page (default home) → you’re in! |
+| **TestWsFedApp**  | WS-Federation  | Browser redirects to ADFS     | Plain text “Hello WS-Fed!”             |
+| **TestSamlApp**   | SAML 2.0       | Browser redirects to SAML IdP | Plain text “Hello SAML!”               |
+
+---
+
+## How it works under the hood
+
+1. **Authentication middleware**
+   In each `Program.cs` we call:
+
+   ```csharp
+   app.UseAuthentication();
+   app.UseAuthorization();
+   ```
+
+   That wires up the challenge flow for the chosen protocol.
+
+2. **Protected endpoint**
+   We map the root (`"/"`) with:
+
+   ```csharp
+   app.MapGet("/", () => "Hello …!").RequireAuthorization();
+   ```
+
+   requiring a valid auth ticket before responding.
+
+3. **Challenge → Callback**
+
+   * **Unauthenticated** requests get a 302 → your IdP.
+   * **On success**, the middleware issues a local cookie.
+   * **Subsequent** calls to `/` or the callback path return 200 + “Hello …!”
+
+---
+
+## Quick test steps
+
+1. **Run all three** (from the solution folder):
+
+   ```bash
+   dotnet run --project TestOpenIdApp
+   dotnet run --project TestWsFedApp
+   dotnet run --project TestSamlApp
+   ```
+2. **Browse** (in separate tabs):
+
+   * `https://localhost:5001/` → redirects to Azure AD → back to home page
+   * `https://localhost:5002/` → redirects to ADFS → back and shows “Hello WS-Fed!”
+   * `https://localhost:5003/` → redirects to Keycloak (or your SAML IdP) → “Hello SAML!”
+
+If you see the “Hello …!” message, the SSO dance succeeded. If you stay on a login page or get a 401, check your redirect/metadata URLs and certs.
