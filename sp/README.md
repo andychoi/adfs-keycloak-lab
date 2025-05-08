@@ -181,3 +181,4 @@ Let me know if you’d like a **PowerShell function** that wraps all three proto
    * `https://localhost:5003/` → redirects to Keycloak (or your SAML IdP) → “Hello SAML!”
 
 If you see the “Hello …!” message, the SSO dance succeeded. If you stay on a login page or get a 401, check your redirect/metadata URLs and certs.
+

@@ -1,0 +1,124 @@
+# =========================
+# ASP.NET / .NET Core
+# =========================
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.vs/
+*.vscode/
+
+# ASP.NET secrets
+secrets.json
+appsettings.*.json
+
+# .NET build artifacts
+project.lock.json
+project.fragment.lock.json
+*.nupkg
+*.snupkg
+*.log
+*.pdb
+*.cache
+*.dbmdl
+
+# IIS settings
+.vsconfig
+*.launchSettings.json
+
+# Rider
+.idea/
+
+# =========================
+# Node.js
+# =========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-lock.yaml
+package-lock.json
+.env
+.env.local
+.env.*.local
+
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+build/
+dist/
+*.egg-info/
+pip-log.txt
+
+# =========================
+# PowerShell
+# =========================
+*.ps1~
+*.psm1~
+*.psd1~
+*.bak
+*.tmp
+*.log
+*.swp
+
+# PowerShell module publishing
+*.nupkg
+
+# VS Code PowerShell extension history
+.history/
+
+# =========================
+# Docker / Docker Compose
+# =========================
+.dockerignore
+Dockerfile*
+docker-compose*.yml
+docker-compose.override.yml
+*.tar
+*.img
+*.container
+**/volume-data/
+**/tmp/
+
+# Optional: ignore named volumes and containers
+volumes/
+containers/
+
+# =========================
+# Logs / Misc
+# =========================
+*.log
+*.gz
+*.zip
+*.7z
+*.rar
+*.tar
+*.bak
+*.tmp
+*.swp
+*.DS_Store
+Thumbs.db
+
+# Ignore OS-specific files
+ehthumbs.db
+Icon?
+.DS_Store
+desktop.ini
+
+# Optional: IDEs
+.idea/
+*.iml
+.vscode/
+*.code-workspace
+
+.git
